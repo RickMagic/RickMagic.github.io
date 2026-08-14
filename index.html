@@ -1097,13 +1097,13 @@
 
       <!-- Day Tabs -->
       <div class="bg-slate-900/70 border border-slate-800 rounded-full p-1.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar mb-5 text-xs" id="scheduleDayTabs">
-        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition" data-day="monday">Lunes</button>
-        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition" data-day="tuesday">Martes</button>
-        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition" data-day="wednesday">Miércoles</button>
-        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition" data-day="thursday">Jueves</button>
-        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition" data-day="friday">Viernes</button>
-        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition" data-day="saturday">Sábado</button>
-        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition" data-day="sunday">Domingo</button>
+        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition sm:flex-1 sm:text-center" data-day="monday">Lunes</button>
+        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition sm:flex-1 sm:text-center" data-day="tuesday">Martes</button>
+        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition sm:flex-1 sm:text-center" data-day="wednesday">Miércoles</button>
+        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition sm:flex-1 sm:text-center" data-day="thursday">Jueves</button>
+        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition sm:flex-1 sm:text-center" data-day="friday">Viernes</button>
+        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition sm:flex-1 sm:text-center" data-day="saturday">Sábado</button>
+        <button class="schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition sm:flex-1 sm:text-center" data-day="sunday">Domingo</button>
       </div>
 
       <!-- Schedule Cards Grid -->
@@ -3228,7 +3228,7 @@
 
         document.querySelectorAll('#scheduleDayTabs .schedule-day-btn').forEach(b => {
           const active = b.dataset.day === dayKey;
-          b.className = 'schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition ' +
+          b.className = 'schedule-day-btn px-3 py-2 rounded-xl font-bold whitespace-nowrap transition sm:flex-1 sm:text-center ' +
             (active ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20' : 'bg-slate-800 text-slate-400 hover:text-white');
         });
 
