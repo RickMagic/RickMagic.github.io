@@ -1478,7 +1478,7 @@
         <label class="block cursor-pointer rounded-2xl p-4 text-center transition hover:brightness-110" style="background:#0e1628;border:1.5px dashed #3b4a6b;">
           <input id="staffFileInput" type="file" accept="audio/*" class="hidden">
           <i class="fa-solid fa-cloud-arrow-up text-2xl text-[#f3811e]"></i>
-          <p class="mt-2 text-sm font-bold text-[#f1f5f9]">Seleccionar audio</p>
+          <p class="mt-2 text-sm font-bold text-[#f1f5f9]">Seleccionar audio del avance</p>
           <p class="mt-0.5 text-[11px] text-[#94a3b8]">MP3, M4A, WAV, OGG · máx. 10 MB</p>
         </label>
 
@@ -1486,18 +1486,18 @@
           <div class="flex items-center gap-2 px-3 py-2 rounded-xl" style="background:#0e1628;border:1px solid #243049;">
             <i class="fa-solid fa-file-audio text-[#f3811e]"></i>
             <span id="staffFileName" class="text-xs font-semibold text-[#e2e8f0] truncate flex-1"></span>
-            <button id="staffUploadBtn" type="button" class="text-xs font-bold text-[#ffffff] rounded-lg px-3 py-1.5 transition hover:brightness-110" style="background:#16a34a;">
-              <i class="fa-solid fa-upload mr-1"></i>Subir
-            </button>
           </div>
           <audio id="staffPreviewAudio" controls preload="metadata" class="w-full h-10 rounded-xl"></audio>
+          <input id="staffName" type="text" placeholder="Tu nombre (opcional)"
+                 class="w-full rounded-xl px-4 py-3 text-sm text-[#f1f5f9] outline-none" style="background:#0e1628;border:1px solid #243049;">
+          <textarea id="staffNote" rows="2" placeholder="Observaciones o pauta (opcional)"
+                 class="w-full rounded-xl px-4 py-3 text-sm text-[#f1f5f9] outline-none resize-none" style="background:#0e1628;border:1px solid #243049;"></textarea>
+          <button id="staffSendBtn" type="button" class="w-full rounded-xl py-3 text-sm font-bold text-[#ffffff] transition hover:brightness-110" style="background:linear-gradient(135deg,#f3811e,#c2410c);">
+            <i class="fa-solid fa-paper-plane mr-1"></i>Enviar al correo
+          </button>
         </div>
 
-        <div class="flex items-center justify-between mt-5 mb-2">
-          <p class="text-xs font-bold uppercase tracking-widest text-[#94a3b8]">Audios subidos</p>
-          <span id="staffCount" class="text-[10px] font-bold text-[#94a3b8] px-2 py-0.5 rounded-lg" style="background:#0e1628;border:1px solid #243049;">0</span>
-        </div>
-        <div id="staffList" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
+        <div id="staffStatus" class="hidden mt-3 px-3 py-2.5 rounded-xl text-center text-xs font-semibold"></div>
       </div>
     </div>
   </div>
@@ -3182,22 +3182,10 @@
       initSchedule();
 
       // ===== PANEL DE PERSONAL: avances informativos (protegido por clave) =====
-      // Los audios se guardan en la nube (catbox.moe) y la lista compartida
-      // en jsonbin.io, para que se vean desde cualquier dispositivo.
-      //
-      // CONFIGURACIÓN (solo una vez):
-      //   1) Crea una cuenta gratis en https://jsonbin.io e inicia sesión.
-      //   2) Crea un bin con este contenido exacto:
-      //        {"clave":"Radio95.9","items":[]}
-      //   3) Copia el "Bin ID" del bin (menú: Bin actions -> Copy bin ID).
-      //   4) Copia tu "Master Key" desde https://jsonbin.io/keys.
-      //   5) Pega ambos valores abajo, entre las comillas.
-      const JSONBIN_BIN_ID = '6a7e2bacda38895dfee171dc';
-      const JSONBIN_MASTER_KEY = '$2a$10$0MYD2foFH5p1.xNV1Kxsv.4AmClapPWH0tvTM22Aa/2x4Lqt4VW/6';
-      const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/';
-      const CATBOX_URL = 'https://catbox.moe/user/api.php';
-      const STAFF_PASSWORD = 'Radio95.9'; // Clave del personal (cámbiala aquí)
-      const STAFF_KEY = 'sucre_radio_staff_audios_cache_v1';
+      // Los avances se envían por correo a la cabina (sucreradiofm@gmail.com)
+      // mediante FormSubmit. El audio llega adjunto al correo.
+      const STAFF_PASSWORD = 'Radio95.9';      // Clave del personal (cámbiala aquí)
+      const STAFF_EMAIL_ENDPOINT = 'https://formsubmit.co/ajax/sucreradiofm@gmail.com';
       const STAFF_UNLOCK_KEY = 'sucre_radio_staff_unlocked_v1';
       const STAFF_MAX_MB = 10;
 
@@ -3215,20 +3203,21 @@
       const staffPreview = document.getElementById('staffPreview');
       const staffPreviewAudio = document.getElementById('staffPreviewAudio');
       const staffFileName = document.getElementById('staffFileName');
-      const staffUploadBtn = document.getElementById('staffUploadBtn');
-      const staffList = document.getElementById('staffList');
-      const staffCount = document.getElementById('staffCount');
+      const staffName = document.getElementById('staffName');
+      const staffNote = document.getElementById('staffNote');
+      const staffSendBtn = document.getElementById('staffSendBtn');
+      const staffStatus = document.getElementById('staffStatus');
 
       const staffUnlocked = () => sessionStorage.getItem(STAFF_UNLOCK_KEY) === '1';
       const setStaffUnlocked = (v) => sessionStorage.setItem(STAFF_UNLOCK_KEY, v ? '1' : '0');
 
-      const getStaffCache = () => {
-        try { return JSON.parse(localStorage.getItem(STAFF_KEY)) || []; }
-        catch (e) { return []; }
-      };
-      const saveStaffCache = (list) => {
-        try { localStorage.setItem(STAFF_KEY, JSON.stringify(list)); } catch (e) { /* sin espacio */ }
-      };
+      function staffShowStatus(msg, ok) {
+        if (!staffStatus) return;
+        staffStatus.textContent = msg;
+        staffStatus.className = 'mt-3 px-3 py-2.5 rounded-xl text-center text-xs font-semibold ' + (ok ? 'text-emerald-400' : 'text-[#f87171]');
+        staffStatus.style.border = ok ? '1px solid #1f6e43' : '1px solid #7f2a2a';
+        staffStatus.classList.remove('hidden');
+      }
 
       function openStaffModal() {
         if (!staffModal) return;
@@ -3237,7 +3226,6 @@
         if (staffUnlocked()) {
           staffLogin.classList.add('hidden');
           staffPanel.classList.remove('hidden');
-          loadStaffAudios();
         } else {
           staffLogin.classList.remove('hidden');
           staffPanel.classList.add('hidden');
@@ -3260,145 +3248,53 @@
           staffError.classList.add('hidden');
           staffLogin.classList.add('hidden');
           staffPanel.classList.remove('hidden');
-          loadStaffAudios();
         } else {
           staffError.classList.remove('hidden');
         }
       }
 
-      function formatStaffDate(ts) {
-        try {
-          return new Date(ts).toLocaleString('es-VE', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
-        } catch (e) { return ''; }
-      }
-
-      function formatStaffSize(bytes) {
-        if (!bytes) return '';
-        const mb = bytes / (1024 * 1024);
-        return mb >= 1 ? mb.toFixed(1) + ' MB' : Math.round(bytes / 1024) + ' KB';
-      }
-
-      function renderStaffItems(list, note) {
-        if (staffCount) staffCount.textContent = list.length + ' audio' + (list.length === 1 ? '' : 's');
-        if (!staffList) return;
-        let html = '';
-        if (note) {
-          html += '<div class="px-3 py-2 rounded-xl text-center text-[10px] text-[#fbbf24]" style="background:#0e1628;border:1px solid #243049;">' + escAttr(note) + '</div>';
-        }
-        if (!list.length) {
-          html += '<div class="px-3 py-5 rounded-xl text-center text-[11px] text-[#94a3b8]" style="background:#0e1628;border:1px solid #243049;">Aún no hay audios subidos</div>';
-          staffList.innerHTML = html;
-          return;
-        }
-        html += list.map(a => `
-          <div class="flex items-center gap-2.5 p-2.5 rounded-xl" style="background:#0e1628;border:1px solid #243049;">
-            <i class="fa-solid fa-file-audio text-[#f3811e]"></i>
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-bold text-[#e2e8f0] truncate">${escAttr(a.name)}</p>
-              <p class="text-[10px] text-[#94a3b8]">${escAttr(formatStaffDate(a.date))}${a.size ? ' · ' + escAttr(formatStaffSize(a.size)) : ''}</p>
-            </div>
-            <audio src="${escAttr(a.url)}" preload="none" controls class="h-8 w-24 sm:w-32 rounded-lg"></audio>
-            <button type="button" data-del="${escAttr(a.id)}" class="staff-del w-7 h-7 rounded-lg flex items-center justify-center text-[#f87171] hover:bg-white/5 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
-          </div>`).join('');
-        staffList.innerHTML = html;
-        staffList.querySelectorAll('.staff-del').forEach(btn => {
-          btn.addEventListener('click', () => {
-            if (!confirm('¿Eliminar este audio?')) return;
-            staffDelete(btn.dataset.del);
-          });
-        });
-      }
-
-      async function fetchStaffRecord() {
-        if (!JSONBIN_BIN_ID || !JSONBIN_MASTER_KEY) throw new Error('panel sin configurar');
-        const res = await fetchWithTimeout(JSONBIN_URL + JSONBIN_BIN_ID, 12000, {
-          headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
-        });
-        const json = JSON.parse(res);
-        if (!json || typeof json.record !== 'object') throw new Error('registro inválido');
-        return json.record;
-      }
-
-      async function saveStaffRecord(record) {
-        if (!JSONBIN_BIN_ID || !JSONBIN_MASTER_KEY) throw new Error('panel sin configurar');
-        const res = await fetchWithTimeout(JSONBIN_URL + JSONBIN_BIN_ID, 12000, {
-          method: 'PUT',
-          headers: { 'X-Master-Key': JSONBIN_MASTER_KEY, 'Content-Type': 'application/json' },
-          body: JSON.stringify(record)
-        });
-        const json = JSON.parse(res);
-        if (!json || typeof json.record !== 'object') throw new Error('respuesta inválida');
-        return json.record;
-      }
-
-      async function loadStaffAudios() {
-        if (!staffList) return;
-        staffList.innerHTML = '<div class="px-3 py-5 rounded-xl text-center text-[11px] text-[#94a3b8]" style="background:#0e1628;border:1px solid #243049;"><i class="fa-solid fa-circle-notch fa-spin text-orange-400"></i> Cargando audios...</div>';
-        try {
-          const record = await fetchStaffRecord();
-          if (record.clave !== STAFF_PASSWORD) throw new Error('bin incorrecto');
-          const list = Array.isArray(record.items) ? record.items : [];
-          saveStaffCache(list);
-          renderStaffItems(list);
-        } catch (e) {
-          renderStaffItems(getStaffCache(), 'No se pudo conectar al almacén en la nube. Mostrando audios guardados localmente.');
-        }
-      }
-
-      async function staffDelete(id) {
-        try {
-          const record = await fetchStaffRecord();
-          record.items = (Array.isArray(record.items) ? record.items : []).filter(a => a.id !== id);
-          await saveStaffRecord(record);
-        } catch (e) {
-          alert('No se pudo eliminar el audio. Revisa la conexión.');
-          return;
-        }
-        loadStaffAudios();
+      function staffResetForm() {
+        if (staffPreview) staffPreview.classList.add('hidden');
+        if (staffPreviewAudio) staffPreviewAudio.src = '';
+        if (staffFileInput) staffFileInput.value = '';
+        if (staffName) staffName.value = '';
+        if (staffNote) staffNote.value = '';
       }
 
       function staffHandleFile(file) {
-        if (!file || !staffPreview) return;
+        if (!file || !staffPreview || !staffSendBtn) return;
         const sizeMb = file.size / (1024 * 1024);
         if (sizeMb > STAFF_MAX_MB) {
           alert('El audio supera los ' + STAFF_MAX_MB + ' MB. Compresiona o corta el avance y vuelve a intentarlo.');
           return;
         }
+        if (staffStatus) staffStatus.classList.add('hidden');
         staffFileName.textContent = file.name + ' (' + sizeMb.toFixed(1) + ' MB)';
         staffPreview.classList.remove('hidden');
-        staffUploadBtn.disabled = false;
+        staffSendBtn.disabled = false;
         const reader = new FileReader();
-        reader.onload = () => {
-          staffPreviewAudio.src = reader.result;
-        };
+        reader.onload = () => { staffPreviewAudio.src = reader.result; };
         reader.readAsDataURL(file);
-        staffUploadBtn.onclick = async () => {
-          if (staffUploadBtn.disabled) return;
-          staffUploadBtn.disabled = true;
-          staffUploadBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i>Subiendo...';
+        staffSendBtn.onclick = async () => {
+          if (staffSendBtn.disabled) return;
+          staffSendBtn.disabled = true;
+          staffSendBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i>Enviando...';
           try {
-            if (!JSONBIN_BIN_ID || !JSONBIN_MASTER_KEY) throw new Error('panel sin configurar');
             const fd = new FormData();
-            fd.append('reqtype', 'fileupload');
-            fd.append('fileToUpload', file);
-            const urlText = (await fetchWithTimeout(CATBOX_URL, 60000, { method: 'POST', body: fd })).trim();
-            if (!/^https?:\/\//.test(urlText)) throw new Error('catbox: ' + urlText.slice(0, 80));
-            const record = await fetchStaffRecord();
-            record.items = Array.isArray(record.items) ? record.items : [];
-            record.items.unshift({ id: 'a' + Date.now(), name: file.name, url: urlText, date: new Date().toISOString(), size: file.size });
-            await saveStaffRecord(record);
+            fd.append('attachment', file);
+            fd.append('message', 'Nombre: ' + (staffName.value.trim() || 'No indicado') + '\nObservaciones: ' + (staffNote.value.trim() || 'Sin observaciones'));
+            fd.append('_subject', 'Avance informativo - ' + file.name);
+            fd.append('_captcha', 'false');
+            const res = await fetchWithTimeout(STAFF_EMAIL_ENDPOINT, 60000, { method: 'POST', body: fd });
+            const json = JSON.parse(res);
+            if (!json || !json.success) throw new Error(json && json.message ? json.message : 'error al enviar');
+            staffShowStatus('Audio enviado a la cabina por correo.', true);
+            staffResetForm();
           } catch (e) {
-            alert('No se pudo subir el audio. Revisa la conexión y que el panel esté configurado (Bin ID y Master Key).');
-            staffUploadBtn.disabled = false;
-            staffUploadBtn.innerHTML = '<i class="fa-solid fa-upload mr-1"></i>Subir';
-            return;
+            staffShowStatus('No se pudo enviar. Revisa la conexión o que el formulario esté activado.', false);
           }
-          staffPreview.classList.add('hidden');
-          staffPreviewAudio.src = '';
-          staffFileInput.value = '';
-          staffUploadBtn.disabled = false;
-          staffUploadBtn.innerHTML = '<i class="fa-solid fa-upload mr-1"></i>Subir';
-          loadStaffAudios();
+          staffSendBtn.disabled = false;
+          staffSendBtn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i>Enviar al correo';
         };
       }
 
