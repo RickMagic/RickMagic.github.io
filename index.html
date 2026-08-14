@@ -2054,6 +2054,11 @@
           stopListeningTimer();
         }
 
+        if (playing) {
+          showMiniPlayer();
+        } else {
+          hideMiniPlayer();
+        }
         syncMiniPlayer();
       }
 
@@ -2154,8 +2159,7 @@
         }
       });
 
-      // ===== MINI REPRODUCTOR FLOTANTE (aparece al bajar la página) =====
-      const mainPlayerCard = document.getElementById('mainPlayerCard');
+      // ===== MINI REPRODUCTOR FLOTANTE (aparece al darle Play) =====
       const miniPlayer = document.getElementById('miniPlayer');
       const miniPlayerTitle = document.getElementById('miniPlayerTitle');
       const miniPlayerSubtitle = document.getElementById('miniPlayerSubtitle');
@@ -2195,16 +2199,7 @@
         }, 320);
       }
 
-      if (miniPlayer && mainPlayerCard) {
-        window.addEventListener('scroll', () => {
-          const rect = mainPlayerCard.getBoundingClientRect();
-          if (rect.bottom <= 0) {
-            showMiniPlayer();
-          } else {
-            hideMiniPlayer();
-          }
-        }, { passive: true });
-
+      if (miniPlayer) {
         miniBtnPlay.addEventListener('click', () => btnPlay.click());
 
         miniBtnUp.addEventListener('click', () => {
