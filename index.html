@@ -642,7 +642,7 @@
     <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch my-auto">
       
       <!-- LEFT CARD: Main Player Controls & Visualizer -->
-      <div class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col justify-between items-center relative overflow-hidden">
+      <div id="mainPlayerCard" class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col justify-between items-center relative overflow-hidden">
         
         <!-- Album Art Display -->
         <div class="my-auto flex flex-col items-center justify-center text-center py-2">
@@ -1424,6 +1424,26 @@
     </div>
   </section>
 
+  <!-- MINI REPRODUCTOR FLOTANTE (aparece al bajar la página) -->
+  <div id="miniPlayer" class="fixed bottom-6 left-4 right-20 sm:left-1/2 sm:right-auto sm:w-full sm:max-w-md sm:-translate-x-1/2 z-40 hidden translate-y-24 opacity-0 transition-all duration-300">
+    <div class="glass-card rounded-2xl p-2.5 pl-3 flex items-center gap-2.5 shadow-2xl border border-orange-500/30">
+      <img id="miniPlayerLogo" src="https://i.ibb.co/GfwDJzQM/SUCRFE-RADIO-MINIMAL-2.png" alt="Sucre Radio" class="w-10 h-10 rounded-xl object-contain bg-slate-950/80 border border-slate-800/80 p-1 shrink-0" onerror="this.style.display='none'">
+      <div class="flex-1 min-w-0">
+        <p id="miniPlayerTitle" class="text-sm font-bold text-white truncate leading-tight">Sucre Radio 95.9 FM</p>
+        <p id="miniPlayerSubtitle" class="text-[10px] font-bold text-orange-400 truncate tracking-widest">EN VIVO</p>
+      </div>
+      <button id="miniBtnPlay" aria-label="Reproducir / pausar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-indigo-700 to-orange-500 text-white flex items-center justify-center transition hover:scale-105 active:scale-95 shrink-0">
+        <i id="miniPlayIcon" class="fa-solid fa-play ml-0.5"></i>
+      </button>
+      <button id="miniBtnUp" title="Volver al reproductor" aria-label="Volver al reproductor" class="w-9 h-9 rounded-xl glass-button text-slate-300 hover:text-white flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-chevron-up"></i>
+      </button>
+      <button id="miniBtnClose" title="Ocultar mini reproductor" aria-label="Ocultar mini reproductor" class="w-9 h-9 rounded-xl glass-button text-slate-400 hover:text-rose-400 flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
   <!-- PANEL DE PERSONAL: avances informativos (protegido por clave) -->
   <button id="staffFAB" type="button" title="Acceso del personal" aria-label="Acceso del personal"
      class="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30 hover:scale-110 transition-transform duration-200"
@@ -2033,6 +2053,8 @@
           vinylDisc.classList.remove('translate-x-6', 'animate-spin-slow');
           stopListeningTimer();
         }
+
+        syncMiniPlayer();
       }
 
       function switchToLiveStream(showConnectionMessage = true) {
@@ -2131,6 +2153,70 @@
           switchToLiveStream();
         }
       });
+
+      // ===== MINI REPRODUCTOR FLOTANTE (aparece al bajar la página) =====
+      const mainPlayerCard = document.getElementById('mainPlayerCard');
+      const miniPlayer = document.getElementById('miniPlayer');
+      const miniPlayerTitle = document.getElementById('miniPlayerTitle');
+      const miniPlayerSubtitle = document.getElementById('miniPlayerSubtitle');
+      const miniPlayIcon = document.getElementById('miniPlayIcon');
+      const miniBtnPlay = document.getElementById('miniBtnPlay');
+      const miniBtnUp = document.getElementById('miniBtnUp');
+      const miniBtnClose = document.getElementById('miniBtnClose');
+
+      let miniVisible = false;
+      let miniDismissed = sessionStorage.getItem('sucre_mini_player_dismissed') === '1';
+
+      function syncMiniPlayer() {
+        if (!miniPlayer) return;
+        if (miniPlayerTitle) miniPlayerTitle.textContent = stationTitle ? stationTitle.textContent : 'Sucre Radio 95.9 FM';
+        if (miniPlayerSubtitle) miniPlayerSubtitle.textContent = isPlaying
+          ? (isRecordedMode ? 'GRABACIÓN' : 'EN VIVO')
+          : 'PAUSA';
+        if (miniPlayIcon) miniPlayIcon.className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play ml-0.5';
+      }
+
+      function showMiniPlayer() {
+        if (miniDismissed || miniVisible || !miniPlayer) return;
+        miniVisible = true;
+        syncMiniPlayer();
+        miniPlayer.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          miniPlayer.classList.remove('translate-y-24', 'opacity-0');
+        });
+      }
+
+      function hideMiniPlayer() {
+        if (!miniPlayer) return;
+        miniVisible = false;
+        miniPlayer.classList.add('translate-y-24', 'opacity-0');
+        setTimeout(() => {
+          if (!miniVisible) miniPlayer.classList.add('hidden');
+        }, 320);
+      }
+
+      if (miniPlayer && mainPlayerCard) {
+        window.addEventListener('scroll', () => {
+          const rect = mainPlayerCard.getBoundingClientRect();
+          if (rect.bottom <= 0) {
+            showMiniPlayer();
+          } else {
+            hideMiniPlayer();
+          }
+        }, { passive: true });
+
+        miniBtnPlay.addEventListener('click', () => btnPlay.click());
+
+        miniBtnUp.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        miniBtnClose.addEventListener('click', () => {
+          miniDismissed = true;
+          sessionStorage.setItem('sucre_mini_player_dismissed', '1');
+          hideMiniPlayer();
+        });
+      }
 
       volumeSlider.addEventListener('input', (e) => {
         const val = parseFloat(e.target.value);
