@@ -1934,6 +1934,19 @@
         const container = document.getElementById('viewToday');
         if (!container) return;
         const today = caracasWeekdayKey();
+
+        if (today === 'saturday' || today === 'sunday') {
+          container.innerHTML = `
+          <div class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 text-center">
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <i class="fa-solid fa-moon text-orange-400 text-sm"></i>
+              <span class="text-sm font-extrabold text-white">Sin actividad</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">Los sábados y domingos no tenemos programas asignados.<br>Sigue disfrutando de nuestra señal en vivo.</p>
+          </div>`;
+          return;
+        }
+
         container.innerHTML = '<div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-900/50 border border-slate-800/80 text-xs text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-orange-400"></i>Cargando programación de hoy...</div>';
 
         let data = null;
