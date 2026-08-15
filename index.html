@@ -689,6 +689,18 @@
             <h2 id="stationTitle" class="text-xl sm:text-2xl font-bold text-white tracking-tight">Sucre Radio 95.9 FM</h2>
             <p id="stationSubtitle" class="text-sm text-slate-400 mt-1 font-medium">"La señal que te acompaña en Cumaná"</p>
           </div>
+
+          <!-- AHORA AL AIRE: programa actual en transmisión -->
+          <div id="nowPlayingBar" class="hidden w-full max-w-md mt-3 rounded-2xl border border-orange-500/40 bg-gradient-to-r from-orange-950/50 via-slate-900/80 to-slate-900/50 p-2.5 px-3 flex items-center gap-3 transition-all">
+            <div class="w-9 h-9 rounded-xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0 animate-pulse">
+              <i class="fa-solid fa-tower-broadcast text-sm"></i>
+            </div>
+            <div class="min-w-0 flex-1 text-left">
+              <p class="text-[9px] font-black uppercase tracking-widest text-orange-400">Ahora al aire</p>
+              <a id="nowPlayingTitle" href="#" target="_blank" rel="noopener noreferrer" class="text-sm font-bold text-white truncate block hover:text-orange-300 transition">Cargando programa...</a>
+            </div>
+            <span id="nowPlayingTime" class="text-[10px] font-mono text-slate-400 shrink-0">--:--</span>
+          </div>
         </div>
 
         <!-- On-Demand Audio Scrubber -->
@@ -1901,6 +1913,65 @@
           });
         }
       }
+
+      // ===== AHORA AL AIRE: programa actual en transmisión =====
+      const nowPlayingBar = document.getElementById('nowPlayingBar');
+      const nowPlayingTitle = document.getElementById('nowPlayingTitle');
+      const nowPlayingTime = document.getElementById('nowPlayingTime');
+
+      function caracasTimeMinutes() {
+        try {
+          const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+          const h = parseInt(parts.find(p => p.type === 'hour').value, 10);
+          const m = parseInt(parts.find(p => p.type === 'minute').value, 10);
+          return h * 60 + m;
+        } catch (e) {
+          const d = new Date();
+          return d.getHours() * 60 + d.getMinutes();
+        }
+      }
+
+      function parseHM(s) {
+        const m = /^(\d{1,2}):(\d{2})/.exec(String(s || '').trim());
+        if (!m) return null;
+        let h = parseInt(m[1], 10);
+        if (h >= 24) h = 0;
+        return h * 60 + parseInt(m[2], 10);
+      }
+
+      function programActiveNow(p) {
+        const now = caracasTimeMinutes();
+        const start = parseHM(p.inicio);
+        const end = parseHM(p.final);
+        if (start === null || end === null) return false;
+        if (end <= start) {
+          return now >= start || now < end;
+        }
+        return now >= start && now < end;
+      }
+
+      async function updateNowPlaying() {
+        if (!nowPlayingBar) return;
+        let data = null;
+        try {
+          data = JSON.parse(await fetchWithTimeout(TODAY_SCHEDULE_API + caracasWeekdayKey(), 10000));
+        } catch (e) {
+          data = null;
+        }
+        const items = (data && Array.isArray(data.items)) ? data.items : [];
+        const current = items.find(p => p.onAir) || items.find(p => programActiveNow(p));
+        if (current && current.title) {
+          nowPlayingBar.classList.remove('hidden');
+          nowPlayingTitle.textContent = current.title;
+          nowPlayingTitle.href = current.url || '#';
+          nowPlayingTime.textContent = fmtScheduleTime(current.inicio) + ' - ' + fmtScheduleTime(current.final);
+        } else {
+          nowPlayingBar.classList.add('hidden');
+        }
+      }
+
+      updateNowPlaying();
+      setInterval(updateNowPlaying, 60000);
 
       const recordedScrubberContainer = document.getElementById('recordedScrubberContainer');
       const seekBar = document.getElementById('seekBar');
