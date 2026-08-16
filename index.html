@@ -255,6 +255,39 @@
     color: #ffffff !important;
   }
 
+  /* Ajustes adicionales del modo claro:
+     barras con degradado, insignias de color, estados hover y footer. */
+  .theme-light #nowPlayingBar {
+    background: linear-gradient(90deg, #fff7ed 0%, #f8fafc 55%, #f8fafc 100%) !important;
+    border-color: rgba(243, 129, 30, 0.5) !important;
+  }
+  .theme-light .hover\:bg-red-500:hover.hover\:text-white {
+    color: #ffffff !important;
+  }
+  .theme-light .hover\:bg-slate-900\/80:hover {
+    background-color: rgba(226, 232, 240, 0.95) !important;
+  }
+  .theme-light .bg-orange-500\/90.text-white,
+  .theme-light .bg-amber-600\/90.text-white,
+  .theme-light .bg-blue-600\/90.text-white,
+  .theme-light .bg-emerald-600\/90.text-white,
+  .theme-light .bg-indigo-600\/90.text-white,
+  .theme-light .bg-rose-600\/90.text-white,
+  .theme-light .bg-pink-600\/90.text-white {
+    color: #ffffff !important;
+  }
+  /* El pie de página conserva su fondo oscuro en modo claro:
+     se restauran los tonos vivos de sus iconos y textos. */
+  .theme-light #siteFooter .text-pink-400 { color: #f472b6 !important; }
+  .theme-light #siteFooter .text-blue-400 { color: #60a5fa !important; }
+  .theme-light #siteFooter .text-cyan-400 { color: #22d3ee !important; }
+  .theme-light #siteFooter .text-sky-400 { color: #38bdf8 !important; }
+  .theme-light #siteFooter .text-emerald-400 { color: #34d399 !important; }
+  .theme-light #siteFooter .text-orange-400 { color: #f3811e !important; }
+  .theme-light #siteFooter .text-amber-400 { color: #fbbf24 !important; }
+  /* Etiquetas oscuras que conviven con texto naranja (hover de tarjetas). */
+  .theme-light .bg-slate-950\/70 .text-orange-400 { color: #f3811e !important; }
+
   /* Programas y operadores: los degradados oscuros se sustituyen por tintes claros. */
   .theme-light #viewToday > .bg-gradient-to-r {
     background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 100%) !important;
