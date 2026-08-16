@@ -4,7 +4,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sucre Radio</title>
+<title>Sucre Radio 95.9 FM</title>
+<meta name="description" content="Escucha Sucre Radio 95.9 FM en vivo desde Cumaná, Estado Sucre, Venezuela. Música, noticias al instante, programación y los programas de la emisora. La señal que te acompaña en Cumaná.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sucre Radio 95.9 FM">
+<meta property="og:title" content="Sucre Radio 95.9 FM - La señal que te acompaña en Cumaná">
+<meta property="og:description" content="Escucha Sucre Radio 95.9 FM en vivo. Música, noticias al instante y la programación de la emisora más moderna, más tuya.">
+<meta property="og:url" content="https://rickmagic.github.io/">
+<meta property="og:image" content="https://i.ibb.co/GfwDJzQM/SUCRFE-RADIO-MINIMAL-2.png">
+<meta property="og:locale" content="es_VE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sucre Radio 95.9 FM">
+<meta name="twitter:description" content="Escucha Sucre Radio 95.9 FM en vivo desde Cumaná.">
+<meta name="twitter:image" content="https://i.ibb.co/GfwDJzQM/SUCRFE-RADIO-MINIMAL-2.png">
+<meta name="theme-color" content="#0c1b66">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 </head>
 <body>
 <!-- Tailwind CSS -->
@@ -692,7 +708,15 @@
       
       <!-- LEFT CARD: Main Player Controls & Visualizer -->
       <div id="mainPlayerCard" class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col justify-between items-center relative overflow-hidden">
-        
+
+        <!-- Studio Clock (Estilo cabina de radio) -->
+        <div id="studioClock" class="flex flex-col items-center gap-0.5 select-none">
+          <div class="flex items-baseline gap-1.5">
+            <span id="studioClockTime" class="font-mono text-3xl sm:text-4xl font-black tracking-tight tabular-nums text-white leading-none">--:--:--</span>
+          </div>
+          <span id="studioClockDate" class="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-slate-400"></span>
+        </div>
+
         <!-- Album Art Display -->
         <div class="my-auto flex flex-col items-center justify-center text-center py-2">
           <div class="relative group my-4 flex items-center justify-center" id="logoWavesWrapper">
@@ -1284,6 +1308,32 @@
     </div>
   </section>
 
+  <!-- EFEMÉRIDES DE SUCRE -->
+  <section class="w-full max-w-7xl mx-auto px-4 sm:px-8 my-6 z-10" id="sucreMemoriesSection">
+    <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+      <div class="absolute -top-20 -left-20 w-56 h-56 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 border-b border-slate-800/80 pb-4 relative">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold mb-2">
+            <i class="fa-solid fa-landmark-dome text-xs"></i>
+            <span>Memoria de Nuestra Tierra</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+            Efemérides de Sucre
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">Tal día como hoy</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">Acontecimientos que marcaron la historia de Cumaná y del Estado Sucre.</p>
+        </div>
+      </div>
+
+      <div id="sucreEfemContent" class="relative">
+        <div class="flex items-center gap-2 py-6 justify-center text-xs text-slate-400">
+          <i class="fa-solid fa-circle-notch fa-spin text-amber-400"></i>Cargando efemérides...
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- NOTICIAS DE VENEZUELA SECTION -->
   <section class="w-full max-w-7xl mx-auto px-4 sm:px-8 my-6 z-10" id="newsSection">
     <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
@@ -1593,6 +1643,61 @@
     </div>
   </section>
 
+  <!-- MURO DE SALUDOS DE OYENTES -->
+  <section class="w-full max-w-7xl mx-auto px-4 sm:px-8 my-6 z-10" id="greetingsSection">
+    <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+      <div class="absolute -top-20 -right-20 w-56 h-56 bg-pink-500/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-slate-800/80 pb-4 relative">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-bold mb-2">
+            <i class="fa-solid fa-comments text-xs"></i>
+            <span>Participa</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+            Muro de Saludos
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">WhatsApp</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">Envía tu saludo a la cabina y compártelo con toda la audiencia.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 relative">
+        <!-- Formulario -->
+        <div class="lg:col-span-2 rounded-2xl bg-slate-900/50 border border-slate-800/80 p-5 flex flex-col gap-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane text-orange-400"></i> Deja tu saludo
+          </h3>
+          <input id="greetName" type="text" maxlength="40" placeholder="Tu nombre"
+                 class="w-full rounded-xl px-4 py-3 text-sm text-slate-100 outline-none bg-slate-900/60 border border-slate-800 focus:border-orange-500/50">
+          <input id="greetPlace" type="text" maxlength="40" placeholder="Tu ciudad o sector (opcional)"
+                 class="w-full rounded-xl px-4 py-3 text-sm text-slate-100 outline-none bg-slate-900/60 border border-slate-800 focus:border-orange-500/50">
+          <textarea id="greetMessage" rows="3" maxlength="280" placeholder="Escribe tu saludo o dedicatoria..."
+                    class="w-full rounded-xl px-4 py-3 text-sm text-slate-100 outline-none resize-none bg-slate-900/60 border border-slate-800 focus:border-orange-500/50"></textarea>
+          <div class="flex items-center justify-between gap-2">
+            <span id="greetCharCount" class="text-[10px] font-mono text-slate-500">0 / 280</span>
+          </div>
+          <button id="greetSendBtn" type="button" class="w-full rounded-xl py-3 text-sm font-bold text-white transition hover:brightness-110 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95">
+            <i class="fa-brands fa-whatsapp text-base"></i> Enviar saludo por WhatsApp
+          </button>
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            Tu mensaje se abre en WhatsApp listo para la cabina y también queda guardado en este muro desde tu dispositivo.
+          </p>
+        </div>
+
+        <!-- Muro -->
+        <div class="lg:col-span-3">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-heart text-pink-400"></i> Saludos de la audiencia
+            </h3>
+            <span id="greetCount" class="text-[11px] font-mono text-slate-500"></span>
+          </div>
+          <div id="greetWall" class="space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- MINI REPRODUCTOR FLOTANTE (aparece al darle Play) -->
   <div id="miniPlayer" class="fixed bottom-6 left-4 right-20 sm:left-1/2 sm:right-auto sm:w-full sm:max-w-md sm:-translate-x-1/2 z-40 hidden translate-y-24 opacity-0 transition-all duration-300">
     <div class="glass-card rounded-2xl p-2.5 pl-3 flex items-center gap-2.5 shadow-2xl border border-orange-500/30">
@@ -1612,6 +1717,16 @@
       </button>
     </div>
   </div>
+
+  <!-- PEDIR CANCIÓN POR WHATSAPP -->
+  <a id="btnRequestSong" href="#" target="_blank" rel="noopener noreferrer" title="Pedir una canción por WhatsApp"
+     class="fixed bottom-6 left-6 z-50 flex items-center gap-2 group">
+    <span class="hidden md:block px-3 py-1.5 rounded-xl glass-card text-xs font-bold text-white shadow-lg opacity-80 group-hover:opacity-100 transition-opacity duration-200">Pedir canción</span>
+    <span class="relative w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/40 hover:scale-110 transition-transform duration-200 bg-[#25D366]">
+      <span class="absolute inset-0 rounded-2xl bg-[#25D366] opacity-50 animate-ping"></span>
+      <i class="fa-brands fa-whatsapp text-[#ffffff] text-xl relative"></i>
+    </span>
+  </a>
 
   <!-- PANEL DE PERSONAL: avances informativos (protegido por clave) -->
   <button id="staffFAB" type="button" title="Acceso del personal" aria-label="Acceso del personal"
@@ -3736,6 +3851,163 @@
           staffPasswordEye.querySelector('i').className = isPass ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
         });
         staffFileInput.addEventListener('change', () => staffHandleFile(staffFileInput.files[0]));
+      }
+
+      // ===== RELOJ DE CABINA (ESTUDIO) =====
+      (function initStudioClock() {
+        const tEl = document.getElementById('studioClockTime');
+        const dEl = document.getElementById('studioClockDate');
+        if (!tEl || !dEl) return;
+        const pad2 = n => String(n).padStart(2, '0');
+        const dias = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
+        const meses = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
+        function tick() {
+          const now = new Date();
+          tEl.textContent = pad2(now.getHours()) + ':' + pad2(now.getMinutes()) + ':' + pad2(now.getSeconds());
+          dEl.textContent = dias[now.getDay()] + ', ' + now.getDate() + ' DE ' + meses[now.getMonth()] + ' DE ' + now.getFullYear();
+        }
+        tick();
+        setInterval(tick, 1000);
+      })();
+
+      // ===== BOTÓN PEDIR CANCIÓN (WhatsApp) =====
+      (function initRequestSong() {
+        const btn = document.getElementById('btnRequestSong');
+        if (!btn) return;
+        btn.href = 'https://wa.me/584248917886?text=' + encodeURIComponent('Hola Sucre Radio 95.9 FM! Me gustaría pedir una canción: ');
+      })();
+
+      // ===== EFEMÉRIDES DE SUCRE =====
+      const SUCRES_EFEMERIDES = {
+        '01-01': ['Cumaná da la bienvenida al nuevo año con la tradición de las campanadas de la Basílica Menor de Santa Inés.'],
+        '02-03': ['Natalicio del Gran Mariscal de Ayacucho, Antonio José de Sucre, en Cumaná (1795).'],
+        '02-12': ['Batalla de La Victoria (1814): se conmemora el Día de la Juventud.'],
+        '03-06': ['Natalicio del poeta Andrés Eloy Blanco en Cumaná (1897).'],
+        '04-19': ['Proclamación de la Independencia de Venezuela (1810), celebrada en todo el oriente del país.'],
+        '06-04': ['Fallecimiento del Gran Mariscal de Ayacucho, Antonio José de Sucre, en Berruecos (1830).'],
+        '06-24': ['Batalla de Carabobo (1821) y Día del Ejército Bolivariano.'],
+        '07-05': ['Declaración de la Independencia de Venezuela (1811).'],
+        '07-24': ['Natalicio del Libertador Simón Bolívar (1783).'],
+        '08-06': ['Batalla de Junín (1824), paso previo a la victoria de Ayacucho.'],
+        '10-12': ['Día de la Resistencia Indígena, en memoria de los pueblos originarios de América.'],
+        '12-09': ['Batalla de Ayacucho (1824): la victoria decisiva comandada por el Gran Mariscal de Ayacucho.'],
+      };
+
+      (function initSucreEfem() {
+        const holder = document.getElementById('sucreEfemContent');
+        if (!holder) return;
+        const now = new Date();
+        const key = String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+        const events = SUCRES_EFEMERIDES[key] || null;
+        const fechasClave = [
+          'Cumaná es considerada el primer asentamiento europeo estable en tierra firme de América.',
+          'El Estado Sucre se constituye como entidad federal en 1909, con capital en Cumaná.',
+          'El Castillo San Antonio de la Eminencia, construido a partir de 1659, custodia la bahía de Cumaná.',
+          'El Gran Mariscal de Ayacucho, Antonio José de Sucre, nació en Cumaná en 1795.',
+        ];
+        const dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+        const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        const fechaLarga = dias[now.getDay()] + ' ' + now.getDate() + ' de ' + meses[now.getMonth()];
+        let html = '';
+        if (events) {
+          html += '<div class="flex items-center gap-2 mb-3"><span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[11px] font-bold uppercase tracking-wide">Hoy · ' + fechaLarga + '</span></div>';
+          html += events.map(t =>
+            '<div class="flex items-start gap-3 rounded-2xl bg-slate-900/50 border border-slate-800/80 p-4 mb-3">' +
+              '<span class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0"><i class="fa-solid fa-calendar-day text-xs"></i></span>' +
+              '<p class="text-xs text-slate-300 leading-relaxed">' + escAttr(t) + '</p>' +
+            '</div>').join('');
+        } else {
+          html += '<div class="flex items-center gap-2 mb-3"><span class="px-2.5 py-1 rounded-full bg-slate-800/80 text-slate-300 border border-slate-700/60 text-[11px] font-bold uppercase tracking-wide">Hoy · ' + fechaLarga + '</span></div>';
+          html += '<p class="text-xs text-slate-400 mb-3">Hoy no tenemos efemérides registradas. Conoce estas fechas clave del Estado Sucre:</p>';
+          html += fechasClave.map(t =>
+            '<div class="flex items-start gap-3 rounded-2xl bg-slate-900/50 border border-slate-800/80 p-4 mb-3">' +
+              '<span class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0"><i class="fa-solid fa-landmark text-xs"></i></span>' +
+              '<p class="text-xs text-slate-300 leading-relaxed">' + escAttr(t) + '</p>' +
+            '</div>').join('');
+        }
+        holder.innerHTML = html;
+      })();
+
+      // ===== MURO DE SALUDOS =====
+      (function initGreetings() {
+        const nameEl = document.getElementById('greetName');
+        const placeEl = document.getElementById('greetPlace');
+        const msgEl = document.getElementById('greetMessage');
+        const countEl = document.getElementById('greetCharCount');
+        const sendBtn = document.getElementById('greetSendBtn');
+        const wall = document.getElementById('greetWall');
+        const greetCountEl = document.getElementById('greetCount');
+        if (!wall || !sendBtn) return;
+        const STORE_KEY = 'sr_greetings_v1';
+        const DEFAULT_GREETINGS = [
+          { name: 'María G.', place: 'Cumaná', msg: 'Saludos para toda la familia sucrense. Gracias por acompañarnos.' },
+          { name: 'Carlos P.', place: 'Cumaná', msg: 'Éxitos para la cabina, los escucho desde muy temprano.' },
+          { name: 'Anaís R.', place: 'Sucre', msg: 'Un abrazo enorme para todos los que sintonizan 95.9 FM.' },
+        ];
+        function load() {
+          try {
+            const raw = localStorage.getItem(STORE_KEY);
+            const arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr : [];
+          } catch (e) { return []; }
+        }
+        function save(list) {
+          try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch (e) {}
+        }
+        function render() {
+          const saved = load();
+          const all = saved.length ? saved : DEFAULT_GREETINGS;
+          if (greetCountEl) greetCountEl.textContent = all.length + ' saludos';
+          if (!all.length) {
+            wall.innerHTML = '<div class="flex items-center gap-2 p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 text-xs text-slate-400"><i class="fa-solid fa-heart text-pink-400"></i>Sé el primero en saludar.</div>';
+            return;
+          }
+          wall.innerHTML = all.slice().reverse().map(g =>
+            '<div class="rounded-2xl bg-slate-900/50 border border-slate-800/80 p-4">' +
+              '<div class="flex items-center gap-2.5 mb-1.5">' +
+                '<span class="w-8 h-8 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 flex items-center justify-center font-bold text-xs shrink-0">' + escAttr((g.name || '?').charAt(0).toUpperCase()) + '</span>' +
+                '<div class="min-w-0">' +
+                  '<p class="text-xs font-bold text-white truncate">' + escAttr(g.name || 'Oyente') + '</p>' +
+                  '<p class="text-[10px] font-semibold text-slate-500 truncate">' + escAttr(g.place || 'Sucre, Venezuela') + '</p>' +
+                '</div>' +
+              '</div>' +
+              '<p class="text-xs text-slate-300 leading-relaxed">"' + escAttr(g.msg || '') + '"</p>' +
+            '</div>'
+          ).join('');
+        }
+        function sendGreeting() {
+          const name = (nameEl ? nameEl.value : '').trim();
+          const place = (placeEl ? placeEl.value : '').trim();
+          const msg = (msgEl ? msgEl.value : '').trim();
+          if (!msg) {
+            if (typeof showToast === 'function') showToast('Escribe tu saludo antes de enviarlo.', false);
+            return;
+          }
+          const text = 'Hola Sucre Radio 95.9 FM!\nSaludo de ' + (name || 'un oyente') + (place ? ' desde ' + place : '') + ':\n' + msg;
+          window.open('https://wa.me/584248917886?text=' + encodeURIComponent(text), '_blank');
+          const list = load();
+          list.push({ name: name || 'Oyente', place: place || 'Sucre, Venezuela', msg: msg });
+          save(list);
+          if (nameEl) nameEl.value = '';
+          if (placeEl) placeEl.value = '';
+          if (msgEl) msgEl.value = '';
+          if (countEl) countEl.textContent = '0 / 280';
+          render();
+          if (typeof showToast === 'function') showToast('Saludo enviado a la cabina.', true);
+        }
+        sendBtn.addEventListener('click', sendGreeting);
+        if (msgEl) {
+          msgEl.addEventListener('input', () => { if (countEl) countEl.textContent = msgEl.value.length + ' / 280'; });
+          msgEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendGreeting(); } });
+        }
+        render();
+      })();
+
+      // ===== PWA: registrar service worker =====
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
       }
 
     });
