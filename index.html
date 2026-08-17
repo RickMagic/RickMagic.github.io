@@ -625,6 +625,64 @@
     color: inherit !important;
   }
 
+  /* ===== STAFF PANEL: NUEVO DISEÑO ===== */
+  .staff-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, #f3811e, #c2410c);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 18px; color: #fff;
+    box-shadow: 0 0 0 3px rgba(243,129,30,.25);
+    flex-shrink: 0;
+  }
+  .staff-online-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #22c55e; display: inline-block;
+    animation: staffPulse 2s infinite;
+    box-shadow: 0 0 6px rgba(34,197,94,.6);
+  }
+  @keyframes staffPulse {
+    0%,100% { opacity: 1; } 50% { opacity: .45; }
+  }
+  .staff-tabs {
+    display: flex; gap: 2px; background: #0e1628; border-radius: 12px; padding: 3px;
+    border: 1px solid #1e293b;
+  }
+  .staff-tab {
+    flex: 1; padding: 7px 0; border-radius: 10px; font-size: 11px; font-weight: 700;
+    text-align: center; cursor: pointer; transition: all 180ms ease;
+    color: #64748b; border: none; background: transparent;
+  }
+  .staff-tab:hover { color: #cbd5e1; background: rgba(255,255,255,.04); }
+  .staff-tab.active { color: #fff; background: #f3811e; box-shadow: 0 2px 8px rgba(243,129,30,.35); }
+  .staff-tab-content { display: none; }
+  .staff-tab-content.active { display: block; animation: viewFadeIn 250ms ease forwards; }
+  .staff-field-error { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239,68,68,.2); }
+  .staff-field-error-msg { color: #f87171; font-size: 10px; font-weight: 600; margin-top: 3px; display: none; }
+  .staff-field-error-msg.show { display: block; }
+  .staff-history-item {
+    background: #0e1628; border: 1px solid #1e293b; border-radius: 12px;
+    padding: 10px 12px; display: flex; align-items: center; gap: 10px;
+    transition: border-color 180ms ease;
+  }
+  .staff-history-item:hover { border-color: #334155; }
+  .staff-history-icon {
+    width: 32px; height: 32px; border-radius: 10px; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;
+  }
+  .staff-login-shake { animation: staffShake 400ms ease; }
+  @keyframes staffShake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+  #staffPanelCard {
+    max-height: 85vh; overflow-y: auto;
+  }
+  #staffPanelCard::-webkit-scrollbar { width: 4px; }
+  #staffPanelCard::-webkit-scrollbar-thumb { background: #334155; border-radius: 99px; }
+
   /* ===== 1. TRANSICIONES SUAVES ENTRE VISTAS ===== */
   .view-fade {
     animation: viewFadeIn 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -1779,71 +1837,180 @@
 
   <div id="staffModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
     <div id="staffModalBackdrop" class="absolute inset-0"></div>
-    <div id="staffPanelCard" class="relative w-full max-w-md rounded-3xl p-6">
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(243,129,30,.15);">
-            <i class="fa-solid fa-microphone-lines text-[#f3811e]"></i>
+    <div id="staffPanelCard" class="relative w-full max-w-lg rounded-3xl p-6 sm:p-7">
+
+      <!-- ===== VISTA 1: LOGIN ===== -->
+      <div id="staffLogin">
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(243,129,30,.15);">
+              <i class="fa-solid fa-shield-halved text-[#f3811e]"></i>
+            </div>
+            <div>
+              <p class="text-sm font-extrabold text-[#f1f5f9]">Acceso del Personal</p>
+              <p class="text-[11px] text-[#94a3b8]">Sucre Radio 95.9 FM</p>
+            </div>
+          </div>
+          <button id="staffClose" type="button" class="w-8 h-8 rounded-lg flex items-center justify-center text-[#94a3b8] hover:text-[#f1f5f9] hover:bg-white/5 transition">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="flex flex-col items-center gap-3 py-5 text-center">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center" style="background:rgba(243,129,30,.10);border:1.5px solid rgba(243,129,30,.20);">
+            <i class="fa-solid fa-user-lock text-3xl text-[#f3811e]"></i>
+          </div>
+          <p class="text-base font-bold text-[#f1f5f9]">Zona Restringida</p>
+          <p class="text-xs text-[#94a3b8] max-w-[300px]">Selecciona tu usuario e ingresa tu clave para acceder al panel de personal.</p>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-1.5 ml-1">Usuario</label>
+            <select id="staffUserSelect"
+              class="w-full rounded-xl px-4 py-3 text-sm text-[#f1f5f9] outline-none appearance-none cursor-pointer"
+              style="background:#0e1628;border:1px solid #243049;">
+              <option value="" disabled selected>Seleccionar personal...</option>
+              <option value="richard">Richard</option>
+              <option value="julian">Julian</option>
+              <option value="yascarlis">Yascarlis</option>
+              <option value="ruben">Ruben</option>
+              <option value="obdamel">Obdamel</option>
+              <option value="ivanys">Ivanys</option>
+              <option value="ramcelina">Ramcelina</option>
+              <option value="hector">Hector</option>
+              <option value="heliana">Heliana</option>
+              <option value="stephanie">Stephanie</option>
+            </select>
           </div>
           <div>
-            <p class="text-sm font-extrabold text-[#f1f5f9]">Avances informativos</p>
-            <p class="text-[11px] text-[#94a3b8]">Acceso restringido · Sucre Radio</p>
+            <label class="block text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-1.5 ml-1">Contraseña</label>
+            <div class="relative">
+              <input id="staffPassword" type="password" placeholder="Tu contraseña" autocomplete="off"
+                     class="w-full rounded-xl px-4 py-3 pr-12 text-sm text-[#f1f5f9] outline-none"
+                     style="background:#0e1628;border:1px solid #243049;">
+              <button id="staffPasswordEye" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748b] hover:text-[#f1f5f9] transition">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
           </div>
         </div>
-        <button id="staffClose" type="button" class="w-8 h-8 rounded-lg flex items-center justify-center text-[#94a3b8] hover:text-[#f1f5f9] hover:bg-white/5 transition">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
 
-      <!-- Vista bloqueada -->
-      <div id="staffLogin">
-        <div class="flex flex-col items-center gap-3 py-4 text-center">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background:rgba(243,129,30,.12);">
-            <i class="fa-solid fa-lock text-2xl text-[#f3811e]"></i>
-          </div>
-          <p class="text-sm font-bold text-[#f1f5f9]">Zona del personal</p>
-          <p class="text-xs text-[#94a3b8] max-w-[260px]">Ingresa la clave de acceso para subir o reproducir los avances informativos.</p>
-        </div>
-        <div class="relative">
-          <input id="staffPassword" type="password" placeholder="Clave de acceso" autocomplete="off"
-                 class="w-full rounded-xl px-4 py-3 pr-12 text-sm text-[#f1f5f9] outline-none"
-                 style="background:#0e1628;border:1px solid #243049;">
-          <button id="staffPasswordEye" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748b] hover:text-[#f1f5f9] transition">
-            <i class="fa-regular fa-eye"></i>
-          </button>
-        </div>
-        <p id="staffError" class="hidden mt-2 text-[11px] font-semibold text-[#f87171]"><i class="fa-solid fa-circle-exclamation mr-1"></i>Clave incorrecta. Intenta de nuevo.</p>
-        <button id="staffEnter" type="button" class="mt-3 w-full rounded-xl py-3 text-sm font-bold text-[#ffffff] transition hover:brightness-110"
+        <p id="staffError" class="hidden mt-3 text-[11px] font-semibold text-[#f87171] text-center">
+          <i class="fa-solid fa-circle-exclamation mr-1"></i>Credenciales incorrectas. Verifica tu usuario y contraseña.
+        </p>
+
+        <button id="staffEnter" type="button" class="mt-4 w-full rounded-xl py-3.5 text-sm font-bold text-[#ffffff] transition hover:brightness-110 active:scale-[0.98]"
                 style="background:linear-gradient(135deg,#f3811e,#c2410c);">
-          <i class="fa-solid fa-right-to-bracket mr-2"></i>Entrar
+          <i class="fa-solid fa-right-to-bracket mr-2"></i>Ingresar
         </button>
       </div>
 
-      <!-- Vista del panel -->
+      <!-- ===== VISTA 2: PANEL (post-login) ===== -->
       <div id="staffPanel" class="hidden">
-        <label class="block cursor-pointer rounded-2xl p-4 text-center transition hover:brightness-110" style="background:#0e1628;border:1.5px dashed #3b4a6b;">
-          <input id="staffFileInput" type="file" accept="audio/*" class="hidden">
-          <i class="fa-solid fa-cloud-arrow-up text-2xl text-[#f3811e]"></i>
-          <p class="mt-2 text-sm font-bold text-[#f1f5f9]">Seleccionar audio del avance</p>
-          <p class="mt-0.5 text-[11px] text-[#94a3b8]">MP3, M4A, WAV, OGG · máx. 10 MB</p>
-        </label>
 
-        <div id="staffPreview" class="hidden mt-3 space-y-2">
-          <div class="flex items-center gap-2 px-3 py-2 rounded-xl" style="background:#0e1628;border:1px solid #243049;">
-            <i class="fa-solid fa-file-audio text-[#f3811e]"></i>
-            <span id="staffFileName" class="text-xs font-semibold text-[#e2e8f0] truncate flex-1"></span>
+        <!-- Header con bienvenida -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div id="staffAvatar" class="staff-avatar">--</div>
+            <div>
+              <p class="text-sm font-extrabold text-[#f1f5f9] leading-tight"><span id="staffWelcomeName">Bienvenido</span></p>
+              <p class="text-[11px] text-[#94a3b8]"><span id="staffRole">Personal</span> · <span class="text-emerald-400 font-semibold"><span class="staff-online-dot mr-1"></span>En línea</span></p>
+            </div>
           </div>
-          <audio id="staffPreviewAudio" controls preload="metadata" class="w-full h-10 rounded-xl"></audio>
-          <input id="staffName" type="text" placeholder="Tu nombre (opcional)"
-                 class="w-full rounded-xl px-4 py-3 text-sm text-[#f1f5f9] outline-none" style="background:#0e1628;border:1px solid #243049;">
-          <textarea id="staffNote" rows="2" placeholder="Observaciones o pauta (opcional)"
-                 class="w-full rounded-xl px-4 py-3 text-sm text-[#f1f5f9] outline-none resize-none" style="background:#0e1628;border:1px solid #243049;"></textarea>
-          <button id="staffSendBtn" type="button" class="w-full rounded-xl py-3 text-sm font-bold text-[#ffffff] transition hover:brightness-110" style="background:linear-gradient(135deg,#f3811e,#c2410c);">
-            <i class="fa-solid fa-paper-plane mr-1"></i>Enviar al correo
+          <div class="flex items-center gap-1.5">
+            <button id="staffLogout" type="button" title="Cerrar sesión" class="w-8 h-8 rounded-lg flex items-center justify-center text-[#64748b] hover:text-[#f87171] hover:bg-white/5 transition">
+              <i class="fa-solid fa-right-from-bracket text-sm"></i>
+            </button>
+            <button id="staffClose2" type="button" class="w-8 h-8 rounded-lg flex items-center justify-center text-[#94a3b8] hover:text-[#f1f5f9] hover:bg-white/5 transition">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabs internos -->
+        <div class="staff-tabs mb-4">
+          <button class="staff-tab active" data-staff-tab="avance"><i class="fa-solid fa-microphone mr-1"></i>Avance</button>
+          <button class="staff-tab" data-staff-tab="nota"><i class="fa-solid fa-note-sticky mr-1"></i>Nota</button>
+          <button class="staff-tab" data-staff-tab="historial"><i class="fa-solid fa-clock-rotate-left mr-1"></i>Historial</button>
+          <button class="staff-tab" data-staff-tab="hoy"><i class="fa-solid fa-calendar-day mr-1"></i>Hoy</button>
+        </div>
+
+        <!-- TAB: AVANCE (subir archivo) -->
+        <div id="staffTabAvance" class="staff-tab-content active">
+          <label class="block cursor-pointer rounded-2xl p-5 text-center transition hover:brightness-110" style="background:#0e1628;border:1.5px dashed #3b4a6b;">
+            <input id="staffFileInput" type="file" accept="audio/*,image/*,.pdf,.doc,.docx" class="hidden">
+            <i class="fa-solid fa-cloud-arrow-up text-2xl text-[#f3811e]"></i>
+            <p class="mt-2 text-sm font-bold text-[#f1f5f9]">Seleccionar archivo</p>
+            <p class="mt-0.5 text-[11px] text-[#94a3b8]">Audio, imagen o documento · máx. 10 MB</p>
+          </label>
+
+          <div id="staffPreview" class="hidden mt-3 space-y-2.5">
+            <div class="flex items-center gap-2 px-3 py-2 rounded-xl" style="background:#0e1628;border:1px solid #243049;">
+              <i id="staffPreviewIcon" class="fa-solid fa-file-audio text-[#f3811e]"></i>
+              <span id="staffFileName" class="text-xs font-semibold text-[#e2e8f0] truncate flex-1"></span>
+            </div>
+            <audio id="staffPreviewAudio" controls preload="metadata" class="w-full h-10 rounded-xl hidden"></audio>
+            <img id="staffPreviewImg" class="hidden w-full max-h-32 object-cover rounded-xl border border-[#243049]" alt="Preview">
+
+            <div>
+              <input id="staffName" type="text" placeholder="Tu nombre *"
+                     class="staff-required w-full rounded-xl px-4 py-3 text-sm text-[#f1f5f9] outline-none" style="background:#0e1628;border:1px solid #243049;">
+              <p id="staffNameError" class="staff-field-error-msg"><i class="fa-solid fa-circle-exclamation mr-1"></i>El nombre es obligatorio</p>
+            </div>
+            <div>
+              <textarea id="staffNote" rows="2" placeholder="Observaciones o pauta *"
+                     class="staff-required w-full rounded-xl px-4 py-3 text-sm text-[#f1f5f9] outline-none resize-none" style="background:#0e1628;border:1px solid #243049;"></textarea>
+              <p id="staffNoteError" class="staff-field-error-msg"><i class="fa-solid fa-circle-exclamation mr-1"></i>Las observaciones son obligatorias</p>
+            </div>
+
+            <button id="staffSendBtn" type="button" class="w-full rounded-xl py-3 text-sm font-bold text-[#ffffff] transition hover:brightness-110 active:scale-[0.98]" style="background:linear-gradient(135deg,#f3811e,#c2410c);">
+              <i class="fa-solid fa-paper-plane mr-1"></i>Enviar avance
+            </button>
+          </div>
+
+          <div id="staffStatus" class="hidden mt-3 px-3 py-2.5 rounded-xl text-center text-xs font-semibold"></div>
+        </div>
+
+        <!-- TAB: NOTA RÁPIDA -->
+        <div id="staffTabNota" class="staff-tab-content">
+          <div class="space-y-3">
+            <div>
+              <label class="block text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-1.5 ml-1">Asunto *</label>
+              <input id="staffQuickSubject" type="text" placeholder="Ej: Comunicado urgente"
+                     class="staff-required w-full rounded-xl px-4 py-3 text-sm text-[#f1f5f9] outline-none" style="background:#0e1628;border:1px solid #243049;">
+              <p id="staffSubjectError" class="staff-field-error-msg"><i class="fa-solid fa-circle-exclamation mr-1"></i>El asunto es obligatorio</p>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-[#64748b] uppercase tracking-wider mb-1.5 ml-1">Mensaje *</label>
+              <textarea id="staffQuickMessage" rows="4" placeholder="Escribe tu nota aquí..."
+                     class="staff-required w-full rounded-xl px-4 py-3 text-sm text-[#f1f5f9] outline-none resize-none" style="background:#0e1628;border:1px solid #243049;"></textarea>
+              <p id="staffMessageError" class="staff-field-error-msg"><i class="fa-solid fa-circle-exclamation mr-1"></i>El mensaje es obligatorio</p>
+            </div>
+            <button id="staffSendNoteBtn" type="button" class="w-full rounded-xl py-3 text-sm font-bold text-[#ffffff] transition hover:brightness-110 active:scale-[0.98]" style="background:linear-gradient(135deg,#f3811e,#c2410c);">
+              <i class="fa-solid fa-paper-plane mr-1"></i>Enviar nota rápida
+            </button>
+            <div id="staffNoteStatus" class="hidden px-3 py-2.5 rounded-xl text-center text-xs font-semibold"></div>
+          </div>
+        </div>
+
+        <!-- TAB: HISTORIAL -->
+        <div id="staffTabHistorial" class="staff-tab-content">
+          <div id="staffHistoryList" class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+            <p class="text-xs text-[#64748b] text-center py-6">Aún no hay envíos registrados.</p>
+          </div>
+          <button id="staffClearHistory" type="button" class="hidden mt-3 w-full rounded-xl py-2.5 text-xs font-bold text-[#f87171] border border-[#7f2a2a] hover:bg-[#7f2a2a]/15 transition">
+            <i class="fa-solid fa-trash-can mr-1"></i>Limpiar historial
           </button>
         </div>
 
-        <div id="staffStatus" class="hidden mt-3 px-3 py-2.5 rounded-xl text-center text-xs font-semibold"></div>
+        <!-- TAB: HOY (programación) -->
+        <div id="staffTabHoy" class="staff-tab-content">
+          <div id="staffTodayList" class="space-y-2 max-h-[340px] overflow-y-auto pr-1">
+            <p class="text-xs text-[#64748b] text-center py-6"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i>Cargando programación...</p>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -3773,125 +3940,381 @@
       initSchedule();
 
       // ===== PANEL DE PERSONAL: avances informativos (protegido por clave) =====
-      // Los avances se envían por correo a la cabina (suradiofm@gmail.com)
-      // mediante FormSubmit. El audio llega adjunto al correo.
-      const STAFF_PASSWORD = 'Radio95.9';      // Clave del personal (cámbiala aquí)
+      // Cada usuario tiene nombre y contraseña individual.
+      // Los avances se envían por correo a la cabina (suradiofm@gmail.com) mediante FormSubmit.
       const STAFF_EMAIL_ENDPOINT = 'https://formsubmit.co/ajax/suradiofm@gmail.com';
-      const STAFF_UNLOCK_KEY = 'sucre_radio_staff_unlocked_v1';
       const STAFF_MAX_MB = 10;
+      const STAFF_SESSION_KEY = 'sucre_radio_staff_user';
 
-      const staffFAB = document.getElementById('staffFAB');
-      const staffModal = document.getElementById('staffModal');
-      const staffBackdrop = document.getElementById('staffModalBackdrop');
-      const staffClose = document.getElementById('staffClose');
-      const staffLogin = document.getElementById('staffLogin');
-      const staffPanel = document.getElementById('staffPanel');
-      const staffPassword = document.getElementById('staffPassword');
+      const STAFF_USERS = [
+        { user: 'richard',   pass: 'radio2026', name: 'Richard',   role: 'Locutor',      initials: 'RI' },
+        { user: 'julian',    pass: 'radio2026', name: 'Julian',    role: 'Productor',    initials: 'JU' },
+        { user: 'yascarlis', pass: 'radio2026', name: 'Yascarlis', role: 'Locutora',     initials: 'YA' },
+        { user: 'ruben',     pass: 'radio2026', name: 'Ruben',     role: 'Operador',     initials: 'RU' },
+        { user: 'obdamel',   pass: 'radio2026', name: 'Obdamel',   role: 'Periodista',   initials: 'OB' },
+        { user: 'ivanys',    pass: 'radio2026', name: 'Ivanys',    role: 'Locutora',     initials: 'IV' },
+        { user: 'ramcelina', pass: 'radio2026', name: 'Ramcelina', role: 'Producción',   initials: 'RA' },
+        { user: 'hector',    pass: 'radio2026', name: 'Hector',    role: 'Técnico',      initials: 'HE' },
+        { user: 'heliana',   pass: 'radio2026', name: 'Heliana',   role: 'Locutora',     initials: 'HL' },
+        { user: 'stephanie', pass: 'radio2026', name: 'Stephanie', role: 'Operadora',    initials: 'ST' },
+      ];
+
+      // --- Elementos ---
+      const staffFAB       = document.getElementById('staffFAB');
+      const staffModal     = document.getElementById('staffModal');
+      const staffBackdrop  = document.getElementById('staffModalBackdrop');
+      const staffClose     = document.getElementById('staffClose');
+      const staffClose2    = document.getElementById('staffClose2');
+      const staffLogin     = document.getElementById('staffLogin');
+      const staffPanel     = document.getElementById('staffPanel');
+      const staffUserSelect= document.getElementById('staffUserSelect');
+      const staffPassword  = document.getElementById('staffPassword');
       const staffPasswordEye = document.getElementById('staffPasswordEye');
-      const staffError = document.getElementById('staffError');
-      const staffEnter = document.getElementById('staffEnter');
+      const staffError     = document.getElementById('staffError');
+      const staffEnter     = document.getElementById('staffEnter');
+      const staffAvatar    = document.getElementById('staffAvatar');
+      const staffWelcomeName = document.getElementById('staffWelcomeName');
+      const staffRole      = document.getElementById('staffRole');
+      const staffLogout    = document.getElementById('staffLogout');
       const staffFileInput = document.getElementById('staffFileInput');
-      const staffPreview = document.getElementById('staffPreview');
+      const staffPreview   = document.getElementById('staffPreview');
       const staffPreviewAudio = document.getElementById('staffPreviewAudio');
-      const staffFileName = document.getElementById('staffFileName');
-      const staffName = document.getElementById('staffName');
-      const staffNote = document.getElementById('staffNote');
-      const staffSendBtn = document.getElementById('staffSendBtn');
-      const staffStatus = document.getElementById('staffStatus');
+      const staffPreviewImg   = document.getElementById('staffPreviewImg');
+      const staffPreviewIcon  = document.getElementById('staffPreviewIcon');
+      const staffFileName  = document.getElementById('staffFileName');
+      const staffName      = document.getElementById('staffName');
+      const staffNote      = document.getElementById('staffNote');
+      const staffSendBtn   = document.getElementById('staffSendBtn');
+      const staffStatus    = document.getElementById('staffStatus');
+      const staffNameError = document.getElementById('staffNameError');
+      const staffNoteError = document.getElementById('staffNoteError');
+      const staffQuickSubject = document.getElementById('staffQuickSubject');
+      const staffQuickMessage = document.getElementById('staffQuickMessage');
+      const staffSendNoteBtn  = document.getElementById('staffSendNoteBtn');
+      const staffNoteStatus   = document.getElementById('staffNoteStatus');
+      const staffSubjectError = document.getElementById('staffSubjectError');
+      const staffMessageError = document.getElementById('staffMessageError');
+      const staffHistoryList  = document.getElementById('staffHistoryList');
+      const staffClearHistory = document.getElementById('staffClearHistory');
+      const staffTodayList    = document.getElementById('staffTodayList');
 
-      const staffUnlocked = () => sessionStorage.getItem(STAFF_UNLOCK_KEY) === '1';
-      const setStaffUnlocked = (v) => sessionStorage.setItem(STAFF_UNLOCK_KEY, v ? '1' : '0');
+      let currentStaffUser = null;
 
-      function staffShowStatus(msg, ok) {
-        if (!staffStatus) return;
-        staffStatus.textContent = msg;
-        staffStatus.className = 'mt-3 px-3 py-2.5 rounded-xl text-center text-xs font-semibold ' + (ok ? 'text-emerald-400' : 'text-[#f87171]');
-        staffStatus.style.border = ok ? '1px solid #1f6e43' : '1px solid #7f2a2a';
-        staffStatus.classList.remove('hidden');
+      // --- Sesión ---
+      function getStaffSession() {
+        try { return JSON.parse(sessionStorage.getItem(STAFF_SESSION_KEY)); } catch { return null; }
+      }
+      function setStaffSession(user) {
+        sessionStorage.setItem(STAFF_SESSION_KEY, JSON.stringify(user));
+      }
+      function clearStaffSession() {
+        sessionStorage.removeItem(STAFF_SESSION_KEY);
       }
 
+      // --- Iniciales del avatar ---
+      function getInitials(name) {
+        return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      }
+
+      // --- Abrir / Cerrar modal ---
       function openStaffModal() {
         if (!staffModal) return;
         staffModal.classList.remove('hidden');
         staffModal.classList.add('flex');
-        if (staffUnlocked()) {
-          staffLogin.classList.add('hidden');
-          staffPanel.classList.remove('hidden');
+        const session = getStaffSession();
+        if (session) {
+          showStaffPanel(session);
         } else {
           staffLogin.classList.remove('hidden');
           staffPanel.classList.add('hidden');
           staffError.classList.add('hidden');
           staffPassword.value = '';
-          staffPassword.focus();
+          staffUserSelect.selectedIndex = 0;
         }
       }
-
       function closeStaffModal() {
         if (!staffModal) return;
         staffModal.classList.add('hidden');
         staffModal.classList.remove('flex');
       }
 
+      // --- Login ---
       function staffTryEnter() {
-        if (!staffPassword) return;
-        if (staffPassword.value.trim() === STAFF_PASSWORD) {
-          setStaffUnlocked(true);
-          staffError.classList.add('hidden');
-          staffLogin.classList.add('hidden');
-          staffPanel.classList.remove('hidden');
-        } else {
+        const userKey = staffUserSelect.value;
+        const pass = staffPassword.value.trim();
+        if (!userKey) {
+          staffError.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-1"></i>Selecciona tu usuario.';
           staffError.classList.remove('hidden');
+          return;
+        }
+        const found = STAFF_USERS.find(u => u.user === userKey && u.pass === pass);
+        if (found) {
+          currentStaffUser = found;
+          setStaffSession(found);
+          staffError.classList.add('hidden');
+          showStaffPanel(found);
+        } else {
+          staffError.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-1"></i>Credenciales incorrectas. Verifica tu usuario y contraseña.';
+          staffError.classList.remove('hidden');
+          const card = document.getElementById('staffPanelCard');
+          if (card) { card.classList.remove('staff-login-shake'); void card.offsetWidth; card.classList.add('staff-login-shake'); }
         }
       }
 
-      function staffResetForm() {
-        if (staffPreview) staffPreview.classList.add('hidden');
-        if (staffPreviewAudio) staffPreviewAudio.src = '';
-        if (staffFileInput) staffFileInput.value = '';
-        if (staffName) staffName.value = '';
-        if (staffNote) staffNote.value = '';
+      // --- Mostrar panel post-login ---
+      function showStaffPanel(user) {
+        staffLogin.classList.add('hidden');
+        staffPanel.classList.remove('hidden');
+        const initials = user.initials || getInitials(user.name);
+        staffAvatar.textContent = initials;
+        staffWelcomeName.textContent = '¡Bienvenido ' + user.name + '!';
+        staffRole.textContent = user.role;
+        staffAvatar.style.background = 'linear-gradient(135deg, #f3811e, #c2410c)';
+        activateStaffTab('avance');
+        loadStaffHistory();
       }
 
+      // --- Logout ---
+      function staffDoLogout() {
+        clearStaffSession();
+        currentStaffUser = null;
+        staffPanel.classList.add('hidden');
+        staffLogin.classList.remove('hidden');
+        staffPassword.value = '';
+        staffUserSelect.selectedIndex = 0;
+        staffError.classList.add('hidden');
+      }
+
+      // --- Tabs internos ---
+      function activateStaffTab(tabName) {
+        document.querySelectorAll('.staff-tab').forEach(t => {
+          t.classList.toggle('active', t.dataset.staffTab === tabName);
+        });
+        document.querySelectorAll('.staff-tab-content').forEach(c => c.classList.remove('active'));
+        const target = document.getElementById('staffTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+        if (target) target.classList.add('active');
+        if (tabName === 'hoy') loadStaffTodaySchedule();
+      }
+
+      // --- Validación de campos obligatorios ---
+      function validateRequired(fields) {
+        let valid = true;
+        fields.forEach(({ input, errorEl }) => {
+          if (!input.value.trim()) {
+            input.classList.add('staff-field-error');
+            if (errorEl) errorEl.classList.add('show');
+            valid = false;
+          } else {
+            input.classList.remove('staff-field-error');
+            if (errorEl) errorEl.classList.remove('show');
+          }
+        });
+        return valid;
+      }
+      function clearFieldErrors() {
+        document.querySelectorAll('.staff-field-error').forEach(el => el.classList.remove('staff-field-error'));
+        document.querySelectorAll('.staff-field-error-msg').forEach(el => el.classList.remove('show'));
+      }
+
+      // --- Manejo de archivos ---
       function staffHandleFile(file) {
-        if (!file || !staffPreview || !staffSendBtn) return;
+        if (!file || !staffPreview) return;
         const sizeMb = file.size / (1024 * 1024);
         if (sizeMb > STAFF_MAX_MB) {
-          alert('El audio supera los ' + STAFF_MAX_MB + ' MB. Compresiona o corta el avance y vuelve a intentarlo.');
+          staffShowStatus(staffStatus, 'El archivo supera los ' + STAFF_MAX_MB + ' MB. Comprime o reduce el tamaño.', false);
           return;
         }
         if (staffStatus) staffStatus.classList.add('hidden');
+        clearFieldErrors();
         staffFileName.textContent = file.name + ' (' + sizeMb.toFixed(1) + ' MB)';
         staffPreview.classList.remove('hidden');
-        staffSendBtn.disabled = false;
-        const reader = new FileReader();
-        reader.onload = () => { staffPreviewAudio.src = reader.result; };
-        reader.readAsDataURL(file);
-        staffSendBtn.onclick = async () => {
-          if (staffSendBtn.disabled) return;
-          staffSendBtn.disabled = true;
-          staffSendBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i>Enviando...';
-          try {
-            const fd = new FormData();
-            fd.append('attachment', file);
-            fd.append('message', 'Nombre: ' + (staffName.value.trim() || 'No indicado') + '\nObservaciones: ' + (staffNote.value.trim() || 'Sin observaciones'));
-            fd.append('_subject', 'Avance informativo - ' + file.name);
-            fd.append('_captcha', 'false');
-            const res = await fetchWithTimeout(STAFF_EMAIL_ENDPOINT, 60000, { method: 'POST', body: fd });
-            const json = JSON.parse(res);
-            if (!json || !json.success) throw new Error(json && json.message ? json.message : 'error al enviar');
-            staffShowStatus('Audio enviado a la cabina por correo.', true);
-            staffResetForm();
-          } catch (e) {
-            staffShowStatus('No se pudo enviar. Revisa la conexión o que el formulario esté activado.', false);
-          }
-          staffSendBtn.disabled = false;
-          staffSendBtn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i>Enviar al correo';
-        };
+
+        const isAudio = file.type.startsWith('audio/');
+        const isImage = file.type.startsWith('image/');
+
+        staffPreviewAudio.classList.toggle('hidden', !isAudio);
+        staffPreviewImg.classList.toggle('hidden', !isImage);
+
+        if (isAudio) {
+          staffPreviewIcon.className = 'fa-solid fa-file-audio text-[#f3811e]';
+          const reader = new FileReader();
+          reader.onload = () => { staffPreviewAudio.src = reader.result; };
+          reader.readAsDataURL(file);
+        } else if (isImage) {
+          staffPreviewIcon.className = 'fa-solid fa-file-image text-[#f3811e]';
+          const reader = new FileReader();
+          reader.onload = () => { staffPreviewImg.src = reader.result; };
+          reader.readAsDataURL(file);
+        } else {
+          staffPreviewIcon.className = 'fa-solid fa-file-lines text-[#f3811e]';
+        }
+
+        staffSendBtn.onclick = () => sendStaffFile(file);
       }
 
+      // --- Enviar archivo ---
+      async function sendStaffFile(file) {
+        const session = getStaffSession();
+        const userName = session ? session.name : (staffName.value.trim() || 'Desconocido');
+        if (!validateRequired([
+          { input: staffName, errorEl: staffNameError },
+          { input: staffNote, errorEl: staffNoteError }
+        ])) return;
+
+        staffSendBtn.disabled = true;
+        staffSendBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i>Enviando...';
+        try {
+          const fd = new FormData();
+          fd.append('attachment', file);
+          fd.append('message', 'Enviado por: ' + userName + '\nObservaciones: ' + staffNote.value.trim());
+          fd.append('_subject', 'Avance de ' + userName + ' - ' + file.name);
+          fd.append('_captcha', 'false');
+          const res = await fetchWithTimeout(STAFF_EMAIL_ENDPOINT, 60000, { method: 'POST', body: fd });
+          const json = JSON.parse(res);
+          if (!json || !json.success) throw new Error();
+          staffShowStatus(staffStatus, 'Archivo enviado a la cabina correctamente.', true);
+          addStaffHistory('avance', file.name, userName);
+          staffResetForm();
+        } catch (e) {
+          staffShowStatus(staffStatus, 'No se pudo enviar. Revisa tu conexión o intenta de nuevo.', false);
+        }
+        staffSendBtn.disabled = false;
+        staffSendBtn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i>Enviar avance';
+      }
+
+      // --- Enviar nota rápida ---
+      async function sendStaffNote() {
+        const session = getStaffSession();
+        const userName = session ? session.name : 'Desconocido';
+        if (!validateRequired([
+          { input: staffQuickSubject, errorEl: staffSubjectError },
+          { input: staffQuickMessage, errorEl: staffMessageError }
+        ])) return;
+
+        staffSendNoteBtn.disabled = true;
+        staffSendNoteBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i>Enviando...';
+        try {
+          const fd = new FormData();
+          fd.append('message', 'Nota rápida de ' + userName + '\n\nAsunto: ' + staffQuickSubject.value.trim() + '\n\n' + staffQuickMessage.value.trim());
+          fd.append('_subject', 'Nota rápida - ' + staffQuickSubject.value.trim() + ' (' + userName + ')');
+          fd.append('_captcha', 'false');
+          const res = await fetchWithTimeout(STAFF_EMAIL_ENDPOINT, 60000, { method: 'POST', body: fd });
+          const json = JSON.parse(res);
+          if (!json || !json.success) throw new Error();
+          staffShowStatus(staffNoteStatus, 'Nota enviada a la cabina.', true);
+          addStaffHistory('nota', staffQuickSubject.value.trim(), userName);
+          staffQuickSubject.value = '';
+          staffQuickMessage.value = '';
+          clearFieldErrors();
+        } catch (e) {
+          staffShowStatus(staffNoteStatus, 'No se pudo enviar la nota. Revisa tu conexión.', false);
+        }
+        staffSendNoteBtn.disabled = false;
+        staffSendNoteBtn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i>Enviar nota rápida';
+      }
+
+      // --- Reset form ---
+      function staffResetForm() {
+        if (staffPreview) staffPreview.classList.add('hidden');
+        if (staffPreviewAudio) { staffPreviewAudio.src = ''; staffPreviewAudio.classList.add('hidden'); }
+        if (staffPreviewImg) { staffPreviewImg.src = ''; staffPreviewImg.classList.add('hidden'); }
+        if (staffFileInput) staffFileInput.value = '';
+        if (staffName) staffName.value = '';
+        if (staffNote) staffNote.value = '';
+        clearFieldErrors();
+      }
+
+      // --- Status helper ---
+      function staffShowStatus(el, msg, ok) {
+        if (!el) return;
+        el.textContent = msg;
+        el.className = 'mt-3 px-3 py-2.5 rounded-xl text-center text-xs font-semibold ' + (ok ? 'text-emerald-400' : 'text-[#f87171]');
+        el.style.border = ok ? '1px solid #1f6e43' : '1px solid #7f2a2a';
+        el.classList.remove('hidden');
+      }
+
+      // --- Historial (localStorage) ---
+      const STAFF_HISTORY_KEY = 'sucre_radio_staff_history';
+      function getStaffHistory() {
+        try { return JSON.parse(localStorage.getItem(STAFF_HISTORY_KEY)) || []; } catch { return []; }
+      }
+      function saveStaffHistory(list) {
+        localStorage.setItem(STAFF_HISTORY_KEY, JSON.stringify(list.slice(0, 30)));
+      }
+      function addStaffHistory(type, title, userName) {
+        const list = getStaffHistory();
+        list.unshift({ type, title, user: userName, date: new Date().toISOString(), status: 'enviado' });
+        saveStaffHistory(list);
+        loadStaffHistory();
+      }
+      function loadStaffHistory() {
+        if (!staffHistoryList) return;
+        const session = getStaffSession();
+        const list = getStaffHistory().filter(h => session && h.user === session.name);
+        if (!list.length) {
+          staffHistoryList.innerHTML = '<p class="text-xs text-[#64748b] text-center py-6">Aún no hay envíos registrados.</p>';
+          if (staffClearHistory) staffClearHistory.classList.add('hidden');
+          return;
+        }
+        staffClearHistory.classList.remove('hidden');
+        staffHistoryList.innerHTML = list.map(h => {
+          const d = new Date(h.date);
+          const fecha = d.toLocaleDateString('es-VE', { day: '2-digit', month: 'short' }) + ' ' + d.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+          const isAudio = h.type === 'avance';
+          const icon = isAudio ? '<i class="fa-solid fa-file-audio text-[#f3811e]"></i>' : '<i class="fa-solid fa-note-sticky text-blue-400"></i>';
+          const bg = isAudio ? 'background:rgba(243,129,30,.10);' : 'background:rgba(59,130,246,.10);';
+          return '<div class="staff-history-item">' +
+            '<div class="staff-history-icon" style="' + bg + '">' + icon + '</div>' +
+            '<div class="flex-1 min-w-0">' +
+              '<p class="text-xs font-semibold text-[#e2e8f0] truncate">' + escAttr(h.title) + '</p>' +
+              '<p class="text-[10px] text-[#64748b]">' + fecha + '</p>' +
+            '</div>' +
+            '<span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">Enviado</span>' +
+          '</div>';
+        }).join('');
+      }
+
+      // --- Programación de Hoy ---
+      async function loadStaffTodaySchedule() {
+        if (!staffTodayList) return;
+        try {
+          const res = await fetchWithTimeout('https://sucreradiofm.com/wp-json/NexoRadio/schedule/', 8000);
+          const data = JSON.parse(res);
+          if (!data || !data.length) throw new Error();
+          const now = new Date();
+          const caracasOffset = -4 * 60;
+          const localOffset = now.getTimezoneOffset();
+          const nowMinutes = now.getHours() * 60 + now.getMinutes() + (localOffset + caracasOffset);
+          const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+          let html = '<div class="flex items-center gap-2 mb-2 px-1"><span class="text-[10px] font-bold text-[#f3811e] uppercase tracking-wider">' + dias[now.getDay()] + '</span></div>';
+          data.forEach(p => {
+            const time = p.time || '';
+            const m = /^(\d{1,2}):(\d{2})$/.exec(time);
+            let pm = -1;
+            if (m) { let h = parseInt(m[1], 10); if (h >= 1 && h <= 6) h += 12; if (h > 12) h -= 12; if (h === 0) h = 12; pm = h * 60 + parseInt(m[2], 10); }
+            const isOnAir = pm >= 0 && nowMinutes >= pm && nowMinutes < pm + (parseInt(p.duration, 10) || 60);
+            const isPast = pm >= 0 && nowMinutes >= pm + (parseInt(p.duration, 10) || 60);
+            const statusClass = isOnAir ? 'text-emerald-400' : isPast ? 'text-[#475569]' : 'text-[#94a3b8]';
+            const statusIcon = isOnAir ? '<span class="staff-online-dot mr-1"></span>En vivo' : isPast ? 'Finalizado' : 'Próximo';
+            html += '<div class="flex items-center gap-3 rounded-xl px-3 py-2.5 ' + (isOnAir ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-[#0e1628] border border-[#1e293b]') + '">' +
+              '<span class="text-xs font-mono text-[#64748b] w-14 shrink-0">' + (m ? fmtScheduleTime(time) : time) + '</span>' +
+              '<div class="flex-1 min-w-0">' +
+                '<p class="text-xs font-bold text-[#e2e8f0] truncate">' + escAttr(p.name || p.title || '') + '</p>' +
+              '</div>' +
+              '<span class="text-[10px] font-semibold ' + statusClass + '">' + statusIcon + '</span>' +
+            '</div>';
+          });
+          staffTodayList.innerHTML = html;
+        } catch (e) {
+          staffTodayList.innerHTML = '<p class="text-xs text-[#64748b] text-center py-6"><i class="fa-solid fa-circle-exclamation mr-1"></i>No se pudo cargar la programación.</p>';
+        }
+      }
+
+      // --- Event Listeners ---
       if (staffFAB && staffModal) {
         staffFAB.addEventListener('click', openStaffModal);
         staffClose.addEventListener('click', closeStaffModal);
+        staffClose2.addEventListener('click', closeStaffModal);
         staffBackdrop.addEventListener('click', closeStaffModal);
         staffEnter.addEventListener('click', staffTryEnter);
         staffPassword.addEventListener('keydown', e => { if (e.key === 'Enter') staffTryEnter(); });
@@ -3900,7 +4323,24 @@
           staffPassword.type = isPass ? 'text' : 'password';
           staffPasswordEye.querySelector('i').className = isPass ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
         });
+        staffLogout.addEventListener('click', staffDoLogout);
         staffFileInput.addEventListener('change', () => staffHandleFile(staffFileInput.files[0]));
+        staffSendNoteBtn.addEventListener('click', sendStaffNote);
+
+        document.querySelectorAll('.staff-tab').forEach(tab => {
+          tab.addEventListener('click', () => activateStaffTab(tab.dataset.staffTab));
+        });
+
+        if (staffClearHistory) {
+          staffClearHistory.addEventListener('click', () => {
+            if (confirm('¿Borrar todo tu historial de envíos?')) {
+              const session = getStaffSession();
+              const all = getStaffHistory().filter(h => !(session && h.user === session.name));
+              saveStaffHistory(all);
+              loadStaffHistory();
+            }
+          });
+        }
       }
 
       // ===== RELOJ DE CABINA (ESTUDIO) =====
