@@ -1,7 +1,7 @@
 {
   "name": "Sucre Radio 95.9 FM",
   "short_name": "Sucre Radio",
-  "description": "La señal que te acompaña en Cumaná. Escucha Sucre Radio 95.9 FM en vivo, con noticias al instante y programación.",
+  "description": "La senal que te acompana en Cumana. Escucha Sucre Radio 95.9 FM en vivo, con noticias al instante y programacion.",
   "lang": "es",
   "start_url": "/",
   "scope": "/",
@@ -10,8 +10,8 @@
   "background_color": "#0c1b66",
   "theme_color": "#0c1b66",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "https://i.ibb.co/FLMNRR8T/SUCRFE-RADIO-BLANCO-NARANJA.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "https://i.ibb.co/FLMNRR8T/SUCRFE-RADIO-BLANCO-NARANJA.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "https://i.ibb.co/FLMNRR8T/SUCRFE-RADIO-BLANCO-NARANJA.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
