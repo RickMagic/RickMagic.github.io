@@ -624,6 +624,63 @@
   #staffPanelCard label {
     color: inherit !important;
   }
+
+  /* ===== 1. TRANSICIONES SUAVES ENTRE VISTAS ===== */
+  .view-fade {
+    animation: viewFadeIn 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes viewFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== 2. HOVER GLOW NARANJA EN TARJETAS DE PROGRAMAS ===== */
+  #viewPrograms > div {
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 300ms ease, border-color 300ms ease;
+  }
+  #viewPrograms > div:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(243, 129, 30, 0.25), 0 12px 28px -8px rgba(0, 0, 0, 0.6);
+    border-color: rgba(243, 129, 30, 0.5);
+  }
+  .theme-light #viewPrograms > div:hover {
+    box-shadow: 0 0 20px rgba(243, 129, 30, 0.15), 0 12px 28px -8px rgba(12, 27, 102, 0.2);
+  }
+
+  /* ===== 3. SKELETON LOADING (NOTICIAS) ===== */
+  .skeleton {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.5s ease-in-out infinite;
+    border-radius: 0.75rem;
+  }
+  @keyframes skeletonShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  .theme-light .skeleton {
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+  }
+
+  /* ===== 5. BOTON COMPARTIR NOTICIA ===== */
+  .news-share-btn {
+    transition: transform 180ms ease, background-color 180ms ease;
+  }
+  .news-share-btn:hover {
+    transform: scale(1.1);
+    background-color: rgba(37, 211, 102, 0.3) !important;
+  }
+
+  /* ===== 6. SCROLL TO TOP ===== */
+  #scrollTopBtn {
+    transition: opacity 300ms ease, transform 300ms ease;
+  }
+  #scrollTopBtn.is-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+  }
 </style>
 
 <div id="appRoot" class="min-h-screen w-full m-0 p-0 font-sans antialiased bg-[#060a17] text-slate-100 flex flex-col justify-between selection:bg-orange-500 selection:text-white relative overflow-x-clip transition-colors duration-500 border-none">
@@ -1360,8 +1417,49 @@
 
       <!-- News Cards Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="newsGrid">
-        
-        <!-- NOTICIA 1: Estado Sucre / Servicios -->
+        <!-- SKELETON LOADING: se muestra mientras carga el feed de noticias -->
+        <div class="news-skeleton" id="newsSkeleton">
+          <div class="rounded-2xl overflow-hidden border border-slate-800/80">
+            <div class="skeleton aspect-video w-full"></div>
+            <div class="p-4 space-y-3 bg-slate-900/80">
+              <div class="skeleton h-4 w-3/4 rounded"></div>
+              <div class="skeleton h-3 w-full rounded"></div>
+              <div class="skeleton h-3 w-5/6 rounded"></div>
+              <div class="border-t border-slate-800/60 pt-3 mt-3 flex justify-between">
+                <div class="skeleton h-3 w-24 rounded"></div>
+                <div class="skeleton h-3 w-16 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="news-skeleton">
+          <div class="rounded-2xl overflow-hidden border border-slate-800/80">
+            <div class="skeleton aspect-video w-full"></div>
+            <div class="p-4 space-y-3 bg-slate-900/80">
+              <div class="skeleton h-4 w-2/3 rounded"></div>
+              <div class="skeleton h-3 w-full rounded"></div>
+              <div class="skeleton h-3 w-4/6 rounded"></div>
+              <div class="border-t border-slate-800/60 pt-3 mt-3 flex justify-between">
+                <div class="skeleton h-3 w-20 rounded"></div>
+                <div class="skeleton h-3 w-16 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="news-skeleton">
+          <div class="rounded-2xl overflow-hidden border border-slate-800/80">
+            <div class="skeleton aspect-video w-full"></div>
+            <div class="p-4 space-y-3 bg-slate-900/80">
+              <div class="skeleton h-4 w-4/5 rounded"></div>
+              <div class="skeleton h-3 w-full rounded"></div>
+              <div class="skeleton h-3 w-3/4 rounded"></div>
+              <div class="border-t border-slate-800/60 pt-3 mt-3 flex justify-between">
+                <div class="skeleton h-3 w-28 rounded"></div>
+                <div class="skeleton h-3 w-16 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
         <article class="news-card rounded-2xl bg-slate-900/80 border border-slate-800/80 hover:border-orange-500/50 transition-all duration-300 overflow-hidden flex flex-col justify-between group cursor-pointer" 
                  data-category="sucre"
                  data-id="1"
@@ -2004,6 +2102,11 @@
     <span id="toastMessage" class="text-xs font-semibold">Notificación</span>
   </div>
 
+  <!-- 6. SCROLL TO TOP -->
+  <button id="scrollTopBtn" class="is-hidden fixed bottom-6 left-6 z-50 w-11 h-11 rounded-2xl bg-slate-800/90 border border-slate-700/60 text-slate-300 hover:text-white hover:bg-orange-500/20 hover:border-orange-500/40 flex items-center justify-center shadow-lg backdrop-blur-sm" title="Volver arriba" aria-label="Volver arriba">
+    <i class="fa-solid fa-chevron-up text-sm"></i>
+  </button>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Set current year
@@ -2127,10 +2230,9 @@
         if (tabRecorded) tabRecorded.className = inactiveTabClass + ' relative';
         if (tabOperators) tabOperators.className = inactiveTabClass;
 
-        if (viewToday) viewToday.classList.add('hidden');
-        if (viewPrograms) viewPrograms.classList.add('hidden');
-        if (viewRecorded) viewRecorded.classList.add('hidden');
-        if (viewOperators) viewOperators.classList.add('hidden');
+        [viewToday, viewPrograms, viewRecorded, viewOperators].forEach(v => {
+          if (v) { v.classList.add('hidden'); v.classList.remove('view-fade'); }
+        });
       }
 
       const TODAY_SCHEDULE_API = 'https://sucreradiofm.com/wp-json/NexoRadio/schedule/';
@@ -2218,6 +2320,7 @@
           deactivateAllTabs();
           tabToday.className = activeTabClass;
           viewToday.classList.remove('hidden');
+          viewToday.classList.add('view-fade');
           tabBadge.textContent = 'Guía Diaria';
           loadTodaySchedule();
         });
@@ -2226,6 +2329,7 @@
           deactivateAllTabs();
           tabPrograms.className = activeTabClass;
           viewPrograms.classList.remove('hidden');
+          viewPrograms.classList.add('view-fade');
           tabBadge.textContent = '4 Destacados';
         });
 
@@ -2233,6 +2337,7 @@
           deactivateAllTabs();
           tabRecorded.className = activeTabClass + ' relative';
           viewRecorded.classList.remove('hidden');
+          viewRecorded.classList.add('view-fade');
           tabBadge.textContent = 'Archivo On-Demand';
         });
 
@@ -2241,6 +2346,7 @@
             deactivateAllTabs();
             tabOperators.className = activeTabClass;
             viewOperators.classList.remove('hidden');
+            viewOperators.classList.add('view-fade');
             tabBadge.textContent = 'Equipo de Cabina';
           });
         }
@@ -3877,6 +3983,98 @@
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js').catch(() => {});
         });
+      }
+
+      // ===== 3. SKELETON LOADING: ocultar cuando llegan las noticias =====
+      const newsSkeletons = document.querySelectorAll('.news-skeleton');
+      function hideNewsSkeletons() {
+        newsSkeletons.forEach(s => s.remove());
+      }
+      // Se ocultan cuando renderAutoNews pone las cards reales en el grid
+      const _origRenderAutoNews = window.renderAutoNews;
+      if (typeof _origRenderAutoNews === 'function') {
+        window.renderAutoNews = function(items) {
+          hideNewsSkeletons();
+          return _origRenderAutoNews(items);
+        };
+      }
+      // Fallback: si en 5 segundos no se cargan, ocultar skeleton
+      setTimeout(hideNewsSkeletons, 5000);
+
+      // ===== 5. COMPARTIR NOTICIA POR WHATSAPP =====
+      function addShareButtonsToNewsCards() {
+        document.querySelectorAll('#newsGrid .news-card').forEach(card => {
+          if (card.querySelector('.news-share-btn')) return;
+          const title = card.dataset.title || 'Noticia de Sucre Radio';
+          const footer = card.querySelector('.border-t');
+          if (!footer) return;
+          const shareBtn = document.createElement('button');
+          shareBtn.className = 'news-share-btn w-7 h-7 rounded-lg bg-[#25D366]/15 text-[#25D366] hover:bg-[#25D366]/30 flex items-center justify-center shrink-0';
+          shareBtn.title = 'Compartir por WhatsApp';
+          shareBtn.setAttribute('aria-label', 'Compartir noticia');
+          shareBtn.innerHTML = '<i class="fa-brands fa-whatsapp text-xs"></i>';
+          shareBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            const url = 'https://wa.me/?text=' + encodeURIComponent(title + ' - Lee más en Sucre Radio 95.9 FM: https://rickmagic.github.io/');
+            window.open(url, '_blank');
+          });
+          footer.appendChild(shareBtn);
+        });
+      }
+      // Ejecutar periódicamente para cubrir tanto estáticas como dinámicas
+      setTimeout(addShareButtonsToNewsCards, 500);
+      const _shareObserver = new MutationObserver(addShareButtonsToNewsCards);
+      const _newsGrid = document.getElementById('newsGrid');
+      if (_newsGrid) _shareObserver.observe(_newsGrid, { childList: true });
+
+      // ===== 6. SCROLL TO TOP =====
+      const scrollTopBtn = document.getElementById('scrollTopBtn');
+      if (scrollTopBtn) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 400) {
+            scrollTopBtn.classList.remove('is-hidden');
+          } else {
+            scrollTopBtn.classList.add('is-hidden');
+          }
+        }, { passive: true });
+        scrollTopBtn.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // ===== 4. MINI PLAYER PERSISTENTE =====
+      // Se muestra automáticamente al hacer scroll después del reproductor principal,
+      // se oculta cuando se vuelve arriba. Se puede cerrar con el botón X.
+      const miniPlayerEl = document.getElementById('miniPlayer');
+      const mainPlayerEl = document.getElementById('mainPlayerCard') || document.querySelector('.glass-card');
+      let miniPlayerAutoShown = false;
+      let miniPlayerForceClosed = false;
+      if (miniPlayerEl && mainPlayerEl) {
+        const miniCloseBtn = document.getElementById('miniBtnClose');
+        if (miniCloseBtn) {
+          miniCloseBtn.addEventListener('click', () => {
+            miniPlayerForceClosed = true;
+            miniPlayerEl.classList.add('hidden', 'translate-y-24', 'opacity-0');
+          });
+        }
+        window.addEventListener('scroll', () => {
+          if (miniPlayerForceClosed) return;
+          const rect = mainPlayerEl.getBoundingClientRect();
+          if (rect.bottom < -50 && !miniPlayerAutoShown) {
+            miniPlayerAutoShown = true;
+            miniPlayerEl.classList.remove('hidden');
+            requestAnimationFrame(() => {
+              miniPlayerEl.classList.remove('translate-y-24', 'opacity-0');
+            });
+          } else if (rect.bottom > 0 && miniPlayerAutoShown) {
+            miniPlayerAutoShown = false;
+            if (!miniPlayerEl.dataset.userPlaying) {
+              miniPlayerEl.classList.add('translate-y-24', 'opacity-0');
+              setTimeout(() => { if (!miniPlayerAutoShown) miniPlayerEl.classList.add('hidden'); }, 300);
+            }
+          }
+        }, { passive: true });
       }
 
     });
